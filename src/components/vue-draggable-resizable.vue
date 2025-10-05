@@ -344,8 +344,34 @@ export default {
         const parentHeightChanged = this.parentHeight !== newParentHeight
 
         if (parentWidthChanged || parentHeightChanged) {
+          const oldParentWidth = this.parentWidth
+          const oldParentHeight = this.parentHeight
+
           this.parentWidth = newParentWidth
           this.parentHeight = newParentHeight
+
+          if (parentWidthChanged && newParentWidth < oldParentWidth) {
+            const overflow = (this.left + this.width) - newParentWidth
+            if (overflow > 0) {
+              this.left = Math.max(0, this.left - overflow)
+              const remainingOverflow = (this.left + this.width) - newParentWidth
+              if (remainingOverflow > 0) {
+                this.width = Math.max(this.minWidth, this.width - remainingOverflow)
+              }
+            }
+          }
+
+          if (parentHeightChanged && newParentHeight < oldParentHeight) {
+            const overflow = (this.top + this.height) - newParentHeight
+            if (overflow > 0) {
+              this.top = Math.max(0, this.top - overflow)
+              const remainingOverflow = (this.top + this.height) - newParentHeight
+              if (remainingOverflow > 0) {
+                this.height = Math.max(this.minHeight, this.height - remainingOverflow)
+              }
+            }
+          }
+
           this.right = this.parentWidth - this.width - this.left
           this.bottom = this.parentHeight - this.height - this.top
 
